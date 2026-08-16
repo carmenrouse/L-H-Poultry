@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "L&H Poultry POS",
+    "slug": "lh-poultry-pos",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#1f2937"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.lhpoultry.pos",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Used to scan barcodes at checkout and to capture photos of paper purchase orders/invoices."
+      }
+    },
+    "android": {
+      "package": "com.lhpoultry.pos",
+      "permissions": ["CAMERA"]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Used to scan barcodes at checkout and to capture photos of paper purchase orders/invoices."
+        }
+      ]
+    ],
+    "extra": {
+      "apiBaseUrl": "http://localhost:4000/api"
+    }
+  }
+}

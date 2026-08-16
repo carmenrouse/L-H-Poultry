@@ -41,6 +41,11 @@ All routes below `/api/*` except `/api/auth/*` require `Authorization: Bearer <t
 - `POST /api/auth/login` — `{ email, password }` → `{ token, user }`
 - `GET /api/auth/me`
 
+## Business settings
+
+- `GET /api/business` — current business record (name, `taxRate`, `allowNegativeStock`)
+- `PATCH /api/business` (Owner) — `{ name?, taxRate?, allowNegativeStock? }`
+
 ## Products
 
 - `GET /api/products?search=&category=&barcode=`

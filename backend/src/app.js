@@ -7,6 +7,7 @@ const path = require('path');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
 const authRoutes = require('./routes/auth');
+const businessRoutes = require('./routes/business');
 const userRoutes = require('./routes/users');
 const productRoutes = require('./routes/products');
 const supplierRoutes = require('./routes/suppliers');
@@ -27,6 +28,7 @@ app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 app.get('/health', (req, res) => res.json({ ok: true }));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/business', businessRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/suppliers', supplierRoutes);
