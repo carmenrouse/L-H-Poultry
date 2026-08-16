@@ -1,0 +1,262 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  OWNER
+  MANAGER
+  CASHIER
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  SUBMITTED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CLOSED
+  CANCELLED
+}
+
+enum PurchaseOrderSource {
+  MANUAL
+  SCANNED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+}
+
+enum AdjustmentReason {
+  PO_RECEIPT
+  SALE
+  MANUAL_CORRECTION
+}
+
+enum SyncStatus {
+  NOT_SYNCED
+  PENDING
+  SYNCED
+  ERROR
+}
+
+model Business {
+  id                  String   @id @default(cuid())
+  name                String
+  allowNegativeStock  Boolean  @default(false)
+  taxRate             Decimal  @default(0) @db.Decimal(6, 4)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  users          User[]
+  suppliers      Supplier[]
+  products       Product[]
+  purchaseOrders PurchaseOrder[]
+  sales          Sale[]
+  webExportConfigs WebExportConfig[]
+}
+
+model User {
+  id         String   @id @default(cuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  email      String
+  name       String
+  passwordHash String
+  role       Role     @default(CASHIER)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  purchaseOrdersCreated PurchaseOrder[] @relation("POCreatedBy")
+  purchaseOrdersReceived PurchaseOrder[] @relation("POReceivedBy")
+  sales      Sale[]
+  inventoryAdjustments InventoryAdjustment[]
+
+  @@unique([businessId, email])
+  @@index([businessId])
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  contactName String?
+  email       String?
+  phone       String?
+  address     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  purchaseOrders PurchaseOrder[]
+
+  @@index([businessId])
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  sku           String
+  name          String
+  description   String?
+  cost          Decimal  @default(0) @db.Decimal(10, 2)
+  price         Decimal  @default(0) @db.Decimal(10, 2)
+  quantityOnHand Int     @default(0)
+  reorderPoint  Int      @default(0)
+  category      String?
+  images        String[] @default([])
+  barcode       String?
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  purchaseOrderLineItems PurchaseOrderLineItem[]
+  saleLineItems          SaleLineItem[]
+  inventoryAdjustments   InventoryAdjustment[]
+  webListings            WebListing[]
+
+  @@unique([businessId, sku])
+  @@index([businessId])
+  @@index([businessId, barcode])
+}
+
+model PurchaseOrder {
+  id             String              @id @default(cuid())
+  businessId     String
+  business       Business            @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  supplierId     String
+  supplier       Supplier            @relation(fields: [supplierId], references: [id])
+  status         PurchaseOrderStatus @default(DRAFT)
+  source         PurchaseOrderSource @default(MANUAL)
+  poNumber       String?
+  expectedDate   DateTime?
+  notes          String?
+  scanAttachmentUrl String?
+  scanRawData    Json?
+  createdById    String
+  createdBy      User                @relation("POCreatedBy", fields: [createdById], references: [id])
+  receivedById   String?
+  receivedBy     User?               @relation("POReceivedBy", fields: [receivedById], references: [id])
+  submittedAt    DateTime?
+  receivedAt     DateTime?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  lineItems             PurchaseOrderLineItem[]
+  inventoryAdjustments  InventoryAdjustment[]
+
+  @@index([businessId])
+  @@index([businessId, status])
+  @@index([businessId, supplierId])
+}
+
+model PurchaseOrderLineItem {
+  id              String        @id @default(cuid())
+  purchaseOrderId String
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  productId       String
+  product         Product       @relation(fields: [productId], references: [id])
+  quantityOrdered Int
+  quantityReceived Int          @default(0)
+  unitCost        Decimal       @db.Decimal(10, 2)
+  receivedUnitCost Decimal?     @db.Decimal(10, 2)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([purchaseOrderId])
+  @@index([productId])
+}
+
+model Sale {
+  id            String        @id @default(cuid())
+  businessId    String
+  business      Business      @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  staffId       String
+  staff         User          @relation(fields: [staffId], references: [id])
+  paymentMethod PaymentMethod
+  subtotal      Decimal       @db.Decimal(10, 2)
+  taxTotal      Decimal       @db.Decimal(10, 2)
+  total         Decimal       @db.Decimal(10, 2)
+  createdAt     DateTime      @default(now())
+
+  lineItems             SaleLineItem[]
+  inventoryAdjustments  InventoryAdjustment[]
+
+  @@index([businessId])
+  @@index([businessId, createdAt])
+}
+
+model SaleLineItem {
+  id         String  @id @default(cuid())
+  saleId     String
+  sale       Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+  quantity   Int
+  priceAtSale Decimal @db.Decimal(10, 2)
+
+  @@index([saleId])
+  @@index([productId])
+}
+
+model InventoryAdjustment {
+  id              String           @id @default(cuid())
+  businessId      String
+  productId       String
+  product         Product          @relation(fields: [productId], references: [id])
+  delta           Int
+  reason          AdjustmentReason
+  purchaseOrderId String?
+  purchaseOrder   PurchaseOrder?   @relation(fields: [purchaseOrderId], references: [id])
+  saleId          String?
+  sale            Sale?            @relation(fields: [saleId], references: [id])
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  note            String?
+  createdAt       DateTime         @default(now())
+
+  @@index([businessId])
+  @@index([productId])
+}
+
+model WebExportConfig {
+  id            String   @id @default(cuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name          String
+  baseUrl       String
+  authType      String   @default("bearer")
+  authHeaderName String  @default("Authorization")
+  authToken     String
+  fieldMapping  Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  webListings WebListing[]
+
+  @@index([businessId])
+}
+
+model WebListing {
+  id             String     @id @default(cuid())
+  productId      String
+  product        Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  configId       String
+  config         WebExportConfig @relation(fields: [configId], references: [id], onDelete: Cascade)
+  externalId     String?
+  syncStatus     SyncStatus @default(NOT_SYNCED)
+  lastSyncedAt   DateTime?
+  lastError      String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@unique([productId, configId])
+  @@index([productId])
+}
