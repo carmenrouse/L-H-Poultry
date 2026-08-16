@@ -1,0 +1,21 @@
+invoice_id,customer,issue_date,due_date,amount,status,last_followup
+INV-2201,Greenfield Grocers,2025-11-02,2025-12-02,6200.00,unpaid,none logged
+INV-2214,Maple St Diner,2025-11-18,2025-12-18,1150.00,unpaid,none logged
+INV-2230,Riverside Cafe,2025-12-01,2026-01-01,2340.00,unpaid,called once 12/20
+INV-2241,Hilltop Market,2025-12-10,2026-01-10,4700.00,paid,-
+INV-2255,Greenfield Grocers,2025-12-15,2026-01-15,5980.00,unpaid,none logged
+INV-2260,Union Deli,2025-12-22,2026-01-22,890.00,paid,-
+INV-2271,Maple St Diner,2026-01-05,2026-02-05,1275.00,unpaid,none logged
+INV-2280,Downtown Bistro,2026-01-10,2026-02-10,3100.00,paid,-
+INV-2288,Greenfield Grocers,2026-01-20,2026-02-20,6450.00,unpaid,none logged
+INV-2295,Riverside Cafe,2026-01-25,2026-02-25,2200.00,paid,-
+INV-2301,Hilltop Market,2026-02-01,2026-03-01,4900.00,unpaid,none logged
+INV-2310,Union Deli,2026-02-08,2026-03-08,910.00,paid,-
+INV-2318,Maple St Diner,2026-02-14,2026-03-14,1300.00,unpaid,none logged
+INV-2325,Downtown Bistro,2026-02-20,2026-03-20,3250.00,unpaid,none logged
+INV-2331,Greenfield Grocers,2026-02-25,2026-03-25,6100.00,unpaid,none logged
+
+note from Linda: Greenfield Grocers owes us across 4 invoices going back to
+Nov and I don't think anyone has actually called them since the one time in
+December about a different invoice. Not sure what our terms are with them
+tbh, might be net-30 might be net-45, depends who set it up.

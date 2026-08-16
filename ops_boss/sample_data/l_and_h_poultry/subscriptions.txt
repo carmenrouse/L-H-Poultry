@@ -1,0 +1,30 @@
+L&H Poultry - recurring subscriptions & software (as of March 2026)
+compiled by Linda from card statements, probably missing some
+
+- QuickBooks Online (Plus) - $90/mo - bookkeeping, used daily
+- QuickBooks Online (Advanced) - $180/mo - IT guy set this up in 2024 when we
+  "upgraded", not sure why we have both, someone should check
+- Gusto Payroll - $120/mo + per employee - wait, do we use this or ADP? I see
+  charges from both on the card
+- ADP Payroll - see expenses csv, this is the one we actually run payroll through
+- Fleet tracking app (Samsara) - $89/mo per vehicle x 4 vehicles = $356/mo -
+  only 2 of our delivery vans still have the hardware installed, other 2
+  units are in a drawer somewhere
+- Canva Pro - $13/mo - marketing uses this sometimes
+- Adobe Creative Cloud - $55/mo - not sure who uses this, nobody in the office
+  does design work anymore since the old marketing coordinator left in 2025
+- Zoom Pro - $15/mo - we have 3 seats, only ever use 1 for the weekly call
+- Zoom Pro (second account) - $15/mo - Dave apparently signed up for his own
+  a while back, never got merged
+- DocuSign - $40/mo - used for vendor contracts
+- Constant Contact - $65/mo - email newsletter, last campaign sent was
+  October 2025
+- Slack (Pro) - $8/user/mo x 12 users = $96/mo - most of the crew is on the
+  floor and doesn't check it
+- Google Workspace - $18/user/mo x 14 users = $252/mo
+- Norton antivirus (3 individual licenses, all expensed separately, not a
+  business plan) - $9.99 x 3 = $30/mo roughly
+
+Nobody currently owns reviewing this list. Card statements show these as
+recurring but I don't have a master contract file for most of them - some
+might be month-to-month, some might be annual contracts we can't get out of.
