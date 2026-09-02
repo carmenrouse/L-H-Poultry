@@ -1,18 +1,15 @@
 const jwt = require('jsonwebtoken');
-const prisma = require('../lib/prisma');
+const db = require('../db');
 
-async function authenticate(req, res, next) {
+function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token) {
-    return res.status(401).json({ error: 'Missing bearer token' });
-  }
+  if (!token) return res.status(401).json({ error: 'Missing auth token' });
+
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await prisma.user.findUnique({ where: { id: payload.userId } });
-    if (!user || !user.active) {
-      return res.status(401).json({ error: 'Invalid or inactive user' });
-    }
+    const user = db.prepare('SELECT * FROM users WHERE id = ? AND active = 1').get(payload.sub);
+    if (!user) return res.status(401).json({ error: 'Invalid token' });
     req.user = user;
     next();
   } catch (err) {
@@ -20,17 +17,13 @@ async function authenticate(req, res, next) {
   }
 }
 
-// Role hierarchy: OWNER > MANAGER > CASHIER
-const ROLE_RANK = { CASHIER: 1, MANAGER: 2, OWNER: 3 };
-
-function requireRole(minRole) {
+function requireRole(...roles) {
   return (req, res, next) => {
-    if (!req.user) return res.status(401).json({ error: 'Not authenticated' });
-    if (ROLE_RANK[req.user.role] < ROLE_RANK[minRole]) {
-      return res.status(403).json({ error: `Requires role ${minRole} or higher` });
+    if (!req.user || !roles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
     next();
   };
 }
 
-module.exports = { authenticate, requireRole };
+module.exports = { requireAuth, requireRole };
