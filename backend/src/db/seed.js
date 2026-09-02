@@ -73,3 +73,8 @@ console.log('Seed complete.');
 console.log('  admin / password123 (admin, hourly)');
 console.log('  jamie / password123 (employee, piece_rate)');
 console.log('  alex  / password123 (employee, hourly)');
+
+// Closing explicitly finalizes every cached prepared statement before the
+// process exits. On some better-sqlite3/Node combinations, leaving that to
+// happen implicitly during Node's shutdown teardown crashes the process.
+db.close();
